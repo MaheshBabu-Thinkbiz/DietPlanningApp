@@ -20,7 +20,7 @@ struct SettingsView: View {
     @State fileprivate var shouldRedirectToLogIn = false
     @State fileprivate var reportIssue: Bool = false
     @State fileprivate var isNotificationsEnabled: Bool = false
-    
+    @AppStorage("active_icon") var activeAppIcon : String = "AppIcon"
     
     @State var profileUsername: String = ""
     @State private var fontSize: CGFloat = 5
@@ -97,20 +97,22 @@ struct SettingsView: View {
                             HStack {
                                 Image(systemName: "key.radiowaves.forward").foregroundStyle(Color.blue)
                                 Text("Change Password")
+                                    .font(.system(size: 14))
                             }
                             
                             HStack{
                                 Image(systemName: "lock")
-                                Toggle("Make account Private", isOn: $isPrivate).foregroundStyle(Color("TextColor"))
+                                Toggle("Make account Private", isOn: $isPrivate).foregroundStyle(Color("TextColor")).font(.system(size: 14))
                             }
                         }header: {
                             Text("Account")
                         }
+                        
                         Section{
                             //                            Slider(value: $fontSize, in: 1...10)
                             HStack{
                                 Image(systemName: "bell.badge")
-                                Toggle("Notifications", isOn: $isNotificationsEnabled).foregroundStyle(Color("TextColor"))
+                                Toggle("Notifications", isOn: $isNotificationsEnabled).foregroundStyle(Color("TextColor")).font(.system(size: 14))
                             }
                             
                             HStack{
@@ -119,24 +121,31 @@ struct SettingsView: View {
                                     Text("Auto").tag(AppearnaceStyle.automatic)
                                     Text("Light").tag(AppearnaceStyle.light)
                                     Text("Dark").tag(AppearnaceStyle.dark)
-                                }
+                                }.font(.system(size: 14))
                             }
                             
                             HStack{
                                 Image(systemName: "square.dashed.inset.filled")
-                                Picker("Change app icon", selection: $changeAppIcon) {
-                                    
+                                Picker("Select icon", selection: $activeAppIcon) {
+                                    let customIcons: [String] = ["AppIcon", "BallIcon", "OrangeIcon"]
+                                    ForEach(customIcons, id: \.self){ i in
+                                        HStack{
+                                            Image("IconApp").resizable().frame(width: 30, height: 30)
+                                            Text("\(i)")
+                                        }
+                                            .tag(i)
+                                    }
                                 }.pickerStyle(NavigationLinkPickerStyle())
+
                             }
-                            
                             
                             HStack{
                                 HStack{
                                     Image(systemName: "waveform")
-                                    Text("Version")
+                                    Text("Version").font(.system(size: 14))
                                 }
                                 Spacer()
-                                Text("1.0.0")
+                                Text("1.0.0").font(.system(size: 14))
                             }
                             
                             
@@ -157,7 +166,7 @@ struct SettingsView: View {
                                     Text("Report a crash")
                                     Text("Write feedback on Appstore")
                                     Text("Rate us on Appstore")
-                                }.pickerStyle(NavigationLinkPickerStyle())
+                                }.pickerStyle(NavigationLinkPickerStyle()).font(.system(size: 15))
                             }
                         }header: {
                             HStack{
@@ -242,6 +251,8 @@ struct SettingsView: View {
                 }
             }
             
+        }.onChange(of: activeAppIcon) { newIcon in
+            UIApplication.shared.setAlternateIconName(newIcon)
         }
         
     }
@@ -262,6 +273,7 @@ struct SettingsView: View {
                 try dataFromDataBase.delete(model: DietData.self) } catch { print("Failed to clear all data.") }
         }
     }
+        
 }
 
 #Preview {

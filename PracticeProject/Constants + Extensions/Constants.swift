@@ -39,6 +39,15 @@ struct CommonFunctions{
             let generator = UIImpactFeedbackGenerator(style: impact)
             generator.impactOccurred()
         }
+        
+        static func changeAppIcon(to iconName: String) {
+            UIApplication.shared.setAlternateIconName(iconName) { error in
+                if let error = error {
+                    print("Error setting alternate icon \(error.localizedDescription)")
+                }
+
+            }
+        }
     }
  
 }
